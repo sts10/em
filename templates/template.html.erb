@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+ 
+      <style>
+        p, blockquote {
+          font-family: arial, sans-serif;
+          font-size: 80%;
+        }
+        
+        .clearfix {
+            clear: both;
+        }
+      </style>
+      <% if self.all_head_code %>
+        <%= self.all_head_code.html_safe %>
+      <% end %>
+  </head>
+  <body>
+      <% if self.all_body_top_code %>
+        <%= self.all_body_top_code.html_safe %>
+      <% end %>
+
+      <%= self.html_text.html_safe %>
+  </body>
+</html>
+

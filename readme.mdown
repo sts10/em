@@ -1,0 +1,116 @@
+# eM 
+
+eM, or extendable Markdown, is small Ruby program that attempts to provide a method for extending [Markdown](http://daringfireball.net/projects/markdown/syntax), "a syntax designed for writing on the web." I made it more to illustrate a concept-- it is not very easy to use in its current version. Maybe you can help make it better!
+
+## Introduction (What is eM?)
+
+I've admired the philosophy and mission of Markdown for a while now. It is able to convey, both to humans and machines, the basic formatting of writing-- bold, italics, and lists-- while also adding common web writing components like inline links and images. As a result, web publishing and blogging tools like [Jekyl](http://jekyllrb.com/) and [Octopress](http://octopress.org/docs/blogging/) that take Markdown as an input by default work really well for publishing. 
+
+For this reason I think of Markdown as the modern word-processor for the web: simple enough to be readable as plain text (and thus portable enough for the web), but powerful enough to do most of things most users do when word processing. Markdown of course is not a single app like word processors of old (like Microsoft Word), but rather a free and open syntax that can be easily converted to HTML. 
+
+However, as the web grows and expands I was curious if I could make a kernel of a framework that would allow Markdown to be extended to include new functionality. For example, web writers may want to frequently embed tweets or Facebook posts, or they may want a quick way to generate links to other webpages without going and getting the title of that webpage. 
+
+This project, eM, is built to be cloned and have extensions, written as Ruby classes, added to it. So far I've written three of these extensions as examples (the three cases described in the paragraph above). But I hope you will add more for whatever your needs are. Eventually, if this catches on, I'd love to collaborate on a system by which eM users could share their extensions, uploading and downloading them as seamlessly as Ruby gems. 
+
+## How eM Works
+
+In general, eM converts .em files contained in the `to_convert` directory in to HTML files in the `converted` directory. The .em files can be straight old-fashioned Markdown, or utilize whatever eM extensions are contained in the `extensions` directory. 
+
+_OK so how do I do that?_ 
+
+### Getting Set Up 
+Clone this repository to your local machine. Install the following gems (`gem install gem_name`):
+- kramdown
+- nokogiri
+- twitter
+- twitter-text
+
+Now run the eM editor by running `ruby editor.rb`. You'll be able to (n) create a new eM file, (a) re-convert all eM files, or quit the editor. 
+
+### The Editor 
+
+Choosing the menu item labeled "Create a new eM file" creates a new .em file in the `to_convert` directory and opens it in Vim (sorry for the hard default-- feel free to change). After you save the file and quit Vim (or your text editor of choice), you'll have the choice to "convert" that .em file to HTML.
+
+The conversion process is executed in the `em_file.rb` model. It's a bit confusing as of this version, but basically we go through 5 steps: 
+
+1. Read the .em file into an array called `em_array` (referred to as `self.em_array`). Each line in the file becomes an element in the array. (See the `read_em_file` method.)
+2. Apply the eM extensions in the `extensions` directory to each element of the `em_array`. 
+3. Convert this `em_array` to HTML. (See the `filter_em` method.)
+4. Gather any frontend code specified in all of the extensions. (See the `gather_frontend_code` method).
+5. Print the HTML to an HTML file in the `converted` directory using the ERB template in the `templates` directory. (See the `convert_and_print_to` method.)
+
+## More on Step 2: Applying Extensions
+
+Right, so let's look at the `filter_em` method in the `em_file.rb` file, which does the work of applying the eM extensions.
+
+For each element of the `em_array` (remember, each element of the `em_array` is a string that is a line from the eM file the user writes) we're going to cycle through all the Ruby files in the `extensions` directory. If, when passed into the `identify` class method of an extension model, a given line of em returns true, we're going to "apply" that extension model to this line of em. 
+
+By "apply" we mean that we're going to instantiate an instance of this extension model and pass the em line into it. Then we're going to call that extension model's `present` instance method on the instance and use the string that it returns as the new line.
+
+```ruby
+self.em_array.each do |em_line|
+    model_identity = false
+
+    model_names.each do |model_name|
+        if Object.const_get(model_name).identify(em_line)
+            model_identity = model_name 
+            break
+        end
+    end
+    if model_identity != false
+        new_array << Object.const_get(model_identity).new(em_line).present
+    else
+        new_array << em_line
+    end
+end
+```
+
+(Could probably re-write that `each` loop as a `map` to make it cleaner, but that's for your pull request.)
+
+If no model is identified, just pass the em_line on. We'll pass all of it through a "normal" markdown converter called [Kramdown](https://github.com/gettalong/kramdown) in the `em_array_to_html` method. 
+
+### Note on my Tweet Extension 
+
+If you want the Tweet extension that I wrote to work, you'll need to [register a new Twitter app](https://apps.twitter.com/), then create a file in the `em` directory called something like `secrets.rb` and gitignore it. 
+
+There you can declare variables to be used in the `Tweet` extension. I used global Ruby variables, which probably isn't a great choice. But here's what my `secrets.rb` file looks like: 
+
+```ruby
+$twitter_consumer_key = "key"
+$twitter_consumer_secret = "secret"
+$twitter_access_token = "token"
+$twitter_access_token_secret = "token_secret"
+```
+
+but with the actual keys as the strings. 
+
+## How To Create Your Own Extensions
+
+Create a new Ruby file in the extensions directory named after your extension. All lowercase, with underscores for spaces. So let's say you want to make a new extension called "awesome blockquote". You'd make a file in the `extensions` directory called `awesome_blockquote.rb`. 
+
+Then, in that Ruby file, you'd define a new class as `class AwesomeBlockquote`. Include any Ruby gems or helper files you need. 
+
+### Required Methods
+- You're extension will need an initialize method, where you'll be passed the line of em. An example would be something like 
+```ruby
+def initialize(em_line)
+    @em_line = em_line
+end
+```
+
+- You'll also need a class method called `identify`, which the eM editor will use to direct a line of eM to your extension. 
+
+- Lastly you must have a `present` instance method, which must return the HTML product of your extension (with the `action_view` gem's `html_safe` method applied to it).
+
+### Optional Methods
+If your extension requires any frontend code to be place in the final HTML document in order to look as you desire, you may include class methods `head_code` and/or `body_top_code` to insert a string of code in to the head or the top of the body of the final HTML document. See the `tweet.rb` and `facebook.rb` extensions for examples. 
+
+If you need to store secret tokens or whatever, 
+
+## Avoiding Extension Identifying Overlap
+
+In the current version of eM, I'm not even really sure what order the extensions in the `extensions` directory are applied to each line of eM. There is currently no way to give one extension identifying priority over another extension. Thus, for now, *no one line of user-written eM can make more than one extension's `identify` method return true.* 
+
+Obviously this would be something to improve in future versions. 
+
+

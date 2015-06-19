@@ -1,0 +1,8 @@
+# To Do 
+
+- Write a real Read ME 
+- Figure out a solution to move gem requirements into the extensions files, rather than in editor.rb or em_file.rb
+- Deal with multiple-word extension name
+- Make a real CLI: edit em files, create a new extension, re-convert one particular existing file
+- Write an introductory blog post
+- Write a new extension just for simple, block quote tweet embeds (and figure out how good they look when pasted in to GMail)
