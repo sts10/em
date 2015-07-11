@@ -6,7 +6,7 @@ class Article
   attr_reader :title, :url
 
   def self.identify(em_line)
-    em_line[0..3] == "http"
+    em_line[0..3] == "http" && ['.com', '.org', '.edu', '.gov'].any? { |ending| em_line.include?(ending) }    
   end 
 
   

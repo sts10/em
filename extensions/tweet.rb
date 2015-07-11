@@ -16,9 +16,7 @@ class Tweet
   end
 
   def self.identify(em_line)
-    if em_line[0..1] == "eb" && em_line.include?("twitter.com")
-      return true
-    elsif em_line[0..1] == "se" && em_line.include?("twitter.com")
+    if (em_line[0..1] == "eb" || em_line[0..1] == "se") && em_line.include?("twitter.com")
       return true
     else
       return false
