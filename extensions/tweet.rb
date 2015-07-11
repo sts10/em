@@ -1,5 +1,6 @@
 require 'twitter-text'
 require 'twitter'
+require 'pry'
 
 require_relative '../secrets.rb'
 
@@ -16,6 +17,7 @@ class Tweet
   end
 
   def self.identify(em_line)
+   binding.pry
    if em_line[0..1] == "eb" && em_line.include?("twitter.com")
        @embed = "normal"
        return true
@@ -74,11 +76,12 @@ class Tweet
 
 
   def present
-      if @embed == "normal"
-          html = "<blockquote class=\"twitter-tweet\" align=\"left\" lang=\"en\"><p>"
-      else
-          html = "<blockquote align=\"left\" lang=\"en\"><p>"
-      end
+    
+    if @embed == "normal"
+        html = "<blockquote class=\"twitter-tweet\" align=\"left\" lang=\"en\"><p>"
+    else
+        html = "<blockquote align=\"left\" lang=\"en\"><p>"
+    end
     html = html + self.linkify_tweet
     html = html + "</p>&mdash; #{self.user_name} (@#{self.user_handle}) <a href=\"#{self.tweet_url}\">#{self.created_at.strftime("%m/%d/%y")}</a></blockquote>"
     html = html + "<div class='clearfix'></div>"
