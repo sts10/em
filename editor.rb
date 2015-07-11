@@ -25,7 +25,7 @@ Dir["./extensions/*.rb"].each {|file| require file }
 puts "Name your new file (no extension, no spaces or other funny business)"
 new_file_name = gets.chomp.downcase.gsub(" ", "_")
 
-new_post = File.new("./to_convert/#{new_file_name}.em", 'w')
+new_post = File.new("./to_convert/#{new_file_name}.em", 'a')
 new_post << "holder text"
 new_post.close
 
@@ -47,10 +47,8 @@ while keep_running
 
   puts "Re-convert your eM file to HTML?"
   keep_running = gets.chomp
-  if keep_running.downcase == 'n'
+  if keep_running.downcase == 'n' || keep_running.downcase == 'q'
     keep_running = false
   end
 end
 
-
- 

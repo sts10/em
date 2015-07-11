@@ -1,6 +1,5 @@
 require 'twitter-text'
 require 'twitter'
-require 'pry'
 
 require_relative '../secrets.rb'
 
@@ -17,16 +16,13 @@ class Tweet
   end
 
   def self.identify(em_line)
-   binding.pry
-   if em_line[0..1] == "eb" && em_line.include?("twitter.com")
-       @embed = "normal"
-       return true
-   elsif em_line[0..1] == "se" && em_line.include?("twitter.com")
-       @embed == "simple"
-       return true
-   else
-       return false
-   end
+    if em_line[0..1] == "eb" && em_line.include?("twitter.com")
+      return true
+    elsif em_line[0..1] == "se" && em_line.include?("twitter.com")
+      return true
+    else
+      return false
+    end
   end 
 
   def initialize(em_line)
@@ -40,10 +36,16 @@ class Tweet
     @tweet_url = tweet_obj.url
     @created_at = tweet_obj.created_at
     @expanded_urls = tweet_obj.urls.map { |url| url.attrs[:expanded_url] }    
+
+    if em_line[0..1] == "eb" && em_line.include?("twitter.com")
+      @embed = "normal"
+    elsif em_line[0..1] == "se" && em_line.include?("twitter.com")
+      @embed = "simple"
+    end
   end
 
   def expanded_urls 
-      @expanded_urls
+    @expanded_urls
   end
 
   def linkify_tweet
@@ -76,11 +78,10 @@ class Tweet
 
 
   def present
-    
     if @embed == "normal"
-        html = "<blockquote class=\"twitter-tweet\" align=\"left\" lang=\"en\"><p>"
+      html = "<blockquote class=\"twitter-tweet\" align=\"left\" lang=\"en\"><p>"
     else
-        html = "<blockquote align=\"left\" lang=\"en\"><p>"
+      html = "<blockquote align=\"left\" lang=\"en\"><p>"
     end
     html = html + self.linkify_tweet
     html = html + "</p>&mdash; #{self.user_name} (@#{self.user_handle}) <a href=\"#{self.tweet_url}\">#{self.created_at.strftime("%m/%d/%y")}</a></blockquote>"
