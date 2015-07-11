@@ -8,7 +8,6 @@ class Article
   def self.identify(em_line)
     em_line[0..3] == "http" && ['.com', '.org', '.edu', '.gov'].any? { |ending| em_line.include?(ending) }    
   end 
-
   
   def initialize(url)
     @url = url
@@ -16,7 +15,6 @@ class Article
       @article_page = Nokogiri::HTML(open(url))
       @title = @article_page.css('title').text.lstrip.rstrip
     else
-      # basename = File.basename(em_file, ".*")
       @title = File.basename(URI.parse(url).path, ".*").gsub('-', ' ').split(/(\W)/).map(&:capitalize).join
     end
   end
