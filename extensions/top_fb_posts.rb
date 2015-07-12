@@ -61,7 +61,12 @@ class TopFbPosts
     # end
     html = html + "</ul>"
 
-    return html.html_safe
+    markdown = "**#{@page_name} Facebook**\n"
+    markdown = markdown + "1. [#{@posts[0].headline}](#{@posts[0].url}) - #{@posts[0].reach} reach\n"
+    markdown = markdown + "2. [#{@posts[1].headline}](#{@posts[1].url}) - #{@posts[1].reach} reach\n"
+    markdown = markdown + "3. [#{@posts[2].headline}](#{@posts[2].url}) - #{@posts[2].reach} reach\n"
+
+    return markdown # html.html_safe
   end
 
 end

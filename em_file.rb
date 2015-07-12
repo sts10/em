@@ -59,7 +59,7 @@ class EmFile
     def em_array_to_html
       self.em_array.each do |em_line|
         em_line = Kramdown::Document.new(em_line, :input => "GFM", :coderay_line_numbers => nil, :smart_quotes => ["lsquo", "rsquo", "ldquo", "rdquo"]).to_html
-        binding.pry
+        # binding.pry
         
         # replace smart quotes and other puncution with they HTML codes or dumb alternatives
         em_line = em_line.gsub("“", "&ldquo;").gsub("”", "&rdquo;").gsub("‘", "&lsquo;").gsub("’", "&rsquo;").gsub("–", "&mdash;").gsub('…', '...')
