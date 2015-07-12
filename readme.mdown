@@ -24,6 +24,7 @@ Clone this repository to your local machine. Install the following gems (`gem in
 - nokogiri
 - twitter
 - twitter-text
+- koala
 
 Now run the eM editor by running `ruby editor.rb`. You'll be able to (n) create a new eM file, (a) re-convert all eM files, or quit the editor. 
 
