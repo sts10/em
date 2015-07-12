@@ -9,7 +9,7 @@ require_relative './top_fb_posts_lib/page_report.rb'
 
 class TopFbPosts
   def self.identify(em_line)
-    em_line.chomp == "top fb posts"
+    em_line.chomp.gsub(' ', '') == "top fb posts".gsub(' ', '')
   end
 
   def initialize(em_line)
@@ -36,7 +36,7 @@ class TopFbPosts
   def clean_headlines
     @posts.each do |post|
       if !post.headline || post.headline = ''
-        post.headline = post.copy
+        post.headline = post.copy[0..120]
       end
     end
   end
@@ -65,9 +65,11 @@ class TopFbPosts
       html = html + "</ul>"
 
       markdown = "**#{@page_name} Facebook**\n"
-      markdown = markdown + "1. [#{@posts[0].headline}](#{@posts[0].url}) - #{@posts[0].reach} reach\n"
-      markdown = markdown + "2. [#{@posts[1].headline}](#{@posts[1].url}) - #{@posts[1].reach} reach\n"
-      markdown = markdown + "3. [#{@posts[2].headline}](#{@posts[2].url}) - #{@posts[2].reach} reach\n"
+      5.times do |i|
+        if @posts[i]
+          markdown = markdown + "#{i+1}. [#{@posts[i].headline}](#{@posts[i].url}) - #{@posts[i].reach} reach\n"
+        end
+      end 
 
       ENV["top_fb_posts"] = markdown
     else
