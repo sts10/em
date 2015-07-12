@@ -13,9 +13,12 @@ class TopFbPosts
   end
 
   def initialize(em_line)
-    puts "Enter oauth token (get a new one at https://developers.facebook.com/tools/explorer)"
+    puts "\nEnter oauth token (get a new one at: \nhttps://developers.facebook.com/tools/explorer)"
     @my_oauth_token = gets.chomp
+    self.get_posts 
+  end
 
+  def get_posts
     @report_group = "buzzfeednews"
     @page_name = "buzzfeednews"
 
@@ -44,13 +47,19 @@ class TopFbPosts
     self.clean_headlines
 
     html = "<strong>#{@page_name} Facebook</strong>"
-    html = html + "<ol>"
-    3.times do |i|
-      if @posts[i]
-        html = html + "<li><a href=#{@posts[i].url}>#{@posts[i].headline}</a>"
-        html = html + "#{@posts[i].reach} reach"
-      end
-    end
+    # html = ""
+
+    html = html + "<ul>"
+    html = html + "<li><a href=#{@posts[0].url}>#{@posts[0].headline}</a> #{@posts[0].reach} reach</li>"
+    html = html + "<li><a href=#{@posts[1].url}>#{@posts[1].headline}</a> #{@posts[1].reach} reach</li>"
+    html = html + "<li><a href=#{@posts[2].url}>#{@posts[2].headline}</a> #{@posts[2].reach} reach</li>"
+    # 3.times do |i|
+    #   if @posts[i]
+    #     html = html + "<li><a href=#{@posts[i].url}>#{@posts[i].headline}</a>"
+    #     html = html + "#{@posts[i].reach} reach</li>"
+    #   end
+    # end
+    html = html + "</ul>"
 
     return html.html_safe
   end
