@@ -34,7 +34,7 @@ system "touch ./converted/#{new_file_name}.html"
 system "open ./converted/#{new_file_name}.html"
 
 puts "opening your new eM file in your text editor of choice..."
-system "subl ./to_convert/#{new_file_name}.em"
+system "mvim ./to_convert/#{new_file_name}.em"
 
 
 keep_running = true
@@ -45,7 +45,7 @@ while keep_running
   this_em_file = EmFile.new("./to_convert/#{new_file_name}.em")
   this_em_file.convert_and_print_to("./converted/#{new_file_name}.html")
 
-  puts "Re-convert your eM file to HTML?"
+  puts "Re-convert your eM file to HTML? Y/(n or q)"
   keep_running = gets.chomp
   if keep_running.downcase == 'n' || keep_running.downcase == 'q'
     keep_running = false
