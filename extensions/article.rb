@@ -12,10 +12,13 @@ class Article
   def initialize(url)
     @url = url
     if !@url.include?("nytimes.com")
+      url = URI.encode(url)
+
       @article_page = Nokogiri::HTML(open(url))
       @title = @article_page.css('title').text.lstrip.rstrip
     else
-      @title = File.basename(URI.parse(url).path, ".*").gsub('-', ' ').split(/(\W)/).map(&:capitalize).join
+      encoded_url = URI.encode(url)
+      @title = File.basename(URI.parse(encoded_url).path, ".*").gsub('-', ' ').split(/(\W)/).map(&:capitalize).join
     end
   end
 
